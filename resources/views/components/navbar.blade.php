@@ -30,8 +30,9 @@
         </button>
     </nav>
 
-    {{-- Mobile menu --}}
-    <div id="mobile-menu" class="hidden md:hidden border-t border-bash-ink/10 px-6 pb-6 pt-2 flex flex-col gap-4 font-body text-sm">
+    {{-- Mobile menu — starts collapsed; JS toggles .is-open to animate it
+         open/closed instead of an instant hidden/block swap (see app.css). --}}
+    <div id="mobile-menu" class="mobile-menu md:hidden border-t border-bash-ink/10 px-6 flex flex-col gap-4 font-body text-sm">
         <a href="#home" class="py-1">Home</a>
         <a href="#features" class="py-1">Features</a>
         <a href="#pricing" class="py-1">Pricing</a>

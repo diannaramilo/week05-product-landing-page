@@ -35,13 +35,28 @@
     100% { opacity: 1; transform: translateY(0); }
 }
 
+:root {
+    /* One shared easing curve for every hand-rolled transition on the
+       site (buttons, cards, nav, reveals) so motion feels like it comes
+       from a single hand instead of a pile of default eases. */
+    --ease-smooth: cubic-bezier(.16,.8,.24,1);
+}
+
 html {
     scroll-behavior: smooth;
+    /* Keeps anchored sections from landing behind the sticky navbar. */
+    scroll-padding-top: 5.5rem;
 }
 
 body {
     background-color: #FBF0EA;
     font-family: 'Manrope', sans-serif;
+}
+
+/* Apply the shared easing to every element already carrying a Tailwind
+   transition utility, without having to touch each component's class list. */
+a, button, [class*="transition-"] {
+    transition-timing-function: var(--ease-smooth);
 }
 
 /* Scroll-reveal: elements start hidden, JS toggles .is-visible as they
@@ -53,9 +68,9 @@ body {
     filter: blur(10px);
     transform: translateY(36px) scale(.94) rotate(var(--reveal-rotate, -1.2deg));
     transition:
-        opacity .8s cubic-bezier(.16,.8,.3,1),
-        filter .8s cubic-bezier(.16,.8,.3,1),
-        transform .8s cubic-bezier(.16,.8,.3,1);
+        opacity .9s var(--ease-smooth),
+        filter .9s var(--ease-smooth),
+        transform .9s var(--ease-smooth);
     transition-delay: var(--reveal-delay, 0s);
 }
 .reveal.is-visible {
@@ -79,12 +94,79 @@ body {
     transform: translateY(calc(var(--parallax, 0) * 1px));
 }
 
+/* Mobile nav: height-animated open/close instead of an instant hidden/block
+   swap, so the menu settles open rather than popping in. */
+.mobile-menu {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+    transition:
+        max-height .45s var(--ease-smooth),
+        opacity .3s ease,
+        padding .45s var(--ease-smooth);
+}
+.mobile-menu.is-open {
+    max-height: 28rem;
+    opacity: 1;
+    padding-top: .5rem;
+    padding-bottom: 1.5rem;
+}
+
+/* Spotlight: a soft glow that tracks the cursor across a card, set via
+   --mx/--my custom properties updated on mousemove (see app.js). Doubles
+   as a quiet nod to the brand story — hardware and stitching catching
+   light after dark — rather than a generic card hover. */
+.spotlight {
+    position: relative;
+    --mx: 50%;
+    --my: 50%;
+}
+.spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(280px circle at var(--mx) var(--my), rgba(240,86,122,.14), transparent 70%);
+    opacity: 0;
+    transition: opacity .4s var(--ease-smooth);
+    pointer-events: none;
+}
+.spotlight:hover::before,
+.spotlight:focus-within::before {
+    opacity: 1;
+}
+.spotlight-dark::before {
+    background: radial-gradient(320px circle at var(--mx) var(--my), rgba(246,168,190,.18), transparent 70%);
+}
+
+/* Magnetic clasp card: the one orchestrated interactive moment in the
+   features grid. Two chrome halves slide together and pulse on click,
+   demonstrating the actual feature instead of just describing it. */
+#clasp-left, #clasp-right {
+    transition: transform .5s cubic-bezier(.34,1.56,.64,1);
+}
+#clasp-left.is-shut  { transform: translateX(7px); }
+#clasp-right.is-shut { transform: translateX(-7px); }
+
+.clasp-snap {
+    animation: clasp-pulse .5s var(--ease-smooth);
+}
+@keyframes clasp-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(240,86,122,.45); }
+    60%  { box-shadow: 0 0 0 14px rgba(240,86,122,0); }
+    100% { box-shadow: 0 0 0 0 rgba(240,86,122,0); }
+}
+
 /* Respect users who've asked for less motion */
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .reveal { opacity: 1 !important; filter: none !important; transform: none !important; transition: none !important; }
     .animate-float, .animate-marquee { animation: none !important; }
     .parallax { transform: none !important; }
+    .spotlight::before { display: none; }
+    #clasp-left, #clasp-right, .clasp-snap { transition: none !important; animation: none !important; }
 }
 
 /* Simple phone-frame utility used in the product showcase section */

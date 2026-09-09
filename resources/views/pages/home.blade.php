@@ -8,7 +8,10 @@
 
     <x-marquee text="NEW DROP — SEASON 04" />
 
-    {{-- Features --}}
+    {{-- Features: a bento grid instead of a uniform card wall. One large
+         dark tile carries the visual weight, the clasp card is the single
+         click-to-demo moment, and every card shares a cursor-tracking
+         spotlight that nods at hardware and stitching catching light. --}}
     <section id="features" class="mx-auto max-w-7xl px-6 lg:px-10 py-24 lg:py-32">
         <div class="reveal max-w-xl mb-14">
             <h2 class="font-display font-extrabold text-4xl lg:text-5xl text-bash-ink leading-[1.05]">
@@ -19,19 +22,15 @@
             </p>
         </div>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:auto-rows-[210px]">
 
-            <x-feature-card title="Vegan Leather Shell" description="Cruelty-free, scratch-resistant, and wipes clean after every jeepney ride.">
+            <x-feature-card size="lg" dark title="Vegan Leather Shell" description="Cruelty-free, scratch-resistant, and wipes clean after every jeepney ride.">
                 <x-slot:icon>
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7l8-4 8 4v10l-8 4-8-4V7z"/></svg>
                 </x-slot:icon>
             </x-feature-card>
 
-            <x-feature-card title="Magnetic Chrome Hardware" description="Snap closures that click shut in one motion — no fumbling at the register.">
-                <x-slot:icon>
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="7"/><path stroke-linecap="round" d="M12 9v3l2 2"/></svg>
-                </x-slot:icon>
-            </x-feature-card>
+            <x-clasp-card />
 
             <x-feature-card title="Hidden Laptop Sleeve" description="A padded 14-inch sleeve tucked against your back, out of sight and out of reach.">
                 <x-slot:icon>
