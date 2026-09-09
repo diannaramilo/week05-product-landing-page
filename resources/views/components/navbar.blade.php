@@ -3,7 +3,7 @@
 
         {{-- Logo --}}
         <a href="{{ url('/') }}" class="flex items-center">
-            <img src="{{ asset('images/logo-mark-ink.png') }}" alt="BASH MANILA" class="h-6 w-auto">
+            <img src="{{ asset('images/logo-mark-ink.png') }}" alt="BASH MANILA" class="h-20 lg:h-21 w-auto">
         </a>
 
         {{-- Desktop links --}}

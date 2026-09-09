@@ -15,16 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Scroll reveal: fade + rise each [data-reveal] section in as it enters view
+    // Scroll reveal: fade + rise each .reveal element in as it enters view,
+    // and reverse it back out when scrolled past — so it replays both ways.
     const revealEls = document.querySelectorAll('.reveal');
     if ('IntersectionObserver' in window && revealEls.length) {
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target);
-                    }
+                    entry.target.classList.toggle('is-visible', entry.isIntersecting);
                 });
             },
             { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }

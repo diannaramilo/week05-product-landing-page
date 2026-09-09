@@ -44,22 +44,47 @@ body {
     font-family: 'Manrope', sans-serif;
 }
 
-/* Scroll-reveal: elements start hidden, JS adds .is-visible when they enter the viewport */
+/* Scroll-reveal: elements start hidden, JS toggles .is-visible as they
+   enter/leave the viewport, so the effect replays both scrolling down
+   and scrolling back up. Blur + rise + a hint of rotation, so it feels
+   like content is settling into place rather than just fading. */
 .reveal {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity .8s cubic-bezier(.16,.8,.3,1), transform .8s cubic-bezier(.16,.8,.3,1);
+    filter: blur(10px);
+    transform: translateY(36px) scale(.94) rotate(var(--reveal-rotate, -1.2deg));
+    transition:
+        opacity .8s cubic-bezier(.16,.8,.3,1),
+        filter .8s cubic-bezier(.16,.8,.3,1),
+        transform .8s cubic-bezier(.16,.8,.3,1);
+    transition-delay: var(--reveal-delay, 0s);
 }
 .reveal.is-visible {
     opacity: 1;
-    transform: translateY(0);
+    filter: blur(0);
+    transform: translateY(0) scale(1) rotate(0deg);
+}
+
+/* Cards inside a .reveal-stagger grid cascade in one after another,
+   alternating tilt direction so they don't all settle identically. */
+.reveal-stagger > .reveal:nth-child(1) { --reveal-delay: 0s;    --reveal-rotate: -1.5deg; }
+.reveal-stagger > .reveal:nth-child(2) { --reveal-delay: .08s;  --reveal-rotate: 1.5deg; }
+.reveal-stagger > .reveal:nth-child(3) { --reveal-delay: .16s;  --reveal-rotate: -1.5deg; }
+.reveal-stagger > .reveal:nth-child(4) { --reveal-delay: .24s;  --reveal-rotate: 1.5deg; }
+.reveal-stagger > .reveal:nth-child(5) { --reveal-delay: .32s;  --reveal-rotate: -1.5deg; }
+.reveal-stagger > .reveal:nth-child(6) { --reveal-delay: .4s;   --reveal-rotate: 1.5deg; }
+
+/* Hero decoration drifts with scroll position (set via JS custom property),
+   layered on top of its own idle float animation. */
+.parallax {
+    transform: translateY(calc(var(--parallax, 0) * 1px));
 }
 
 /* Respect users who've asked for less motion */
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .reveal { opacity: 1 !important; filter: none !important; transform: none !important; transition: none !important; }
     .animate-float, .animate-marquee { animation: none !important; }
+    .parallax { transform: none !important; }
 }
 
 /* Simple phone-frame utility used in the product showcase section */
