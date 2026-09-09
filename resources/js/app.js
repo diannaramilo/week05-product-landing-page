@@ -77,4 +77,86 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    if (window.matchMedia('(hover: hover)').matches) {
+        // Tilt cards: a small 3D lean toward the cursor on the showcase
+        // images, for a bit of depth beyond a flat hover state.
+        document.querySelectorAll('.tilt-card').forEach((card) => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const px = (e.clientX - rect.left) / rect.width - 0.5;
+                const py = (e.clientY - rect.top) / rect.height - 0.5;
+                card.style.transform =
+                    `perspective(1200px) rotateX(${(-py * 6).toFixed(2)}deg) rotateY(${(px * 6).toFixed(2)}deg) scale(1.015)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+
+        // Expedition compass: the needle turns to point at the cursor as
+        // it moves across the anchor photo in the showcase section.
+        const compass = document.querySelector('.expedition-compass');
+        const compassTrack = compass ? compass.closest('.compass-track') : null;
+        if (compass && compassTrack) {
+            const needle = compass.querySelector('.compass-needle');
+            compassTrack.addEventListener('mousemove', (e) => {
+                const rect = compass.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const angle = Math.atan2(e.clientY - cy, e.clientX - cx) * (180 / Math.PI) + 90;
+                needle.style.transform = `rotate(${angle}deg)`;
+            });
+            compassTrack.addEventListener('mouseleave', () => {
+                needle.style.transform = 'rotate(0deg)';
+            });
+        }
+    }
+
+    // Showcase filmstrip: a swipeable, snap-scrolling gallery. Dots and
+    // arrow buttons stay in sync with whichever slide is centered.
+    const showcaseTrack = document.querySelector('[data-showcase-track]');
+    if (showcaseTrack) {
+        const slides = Array.from(showcaseTrack.querySelectorAll('[data-showcase-slide]'));
+        const dots = Array.from(document.querySelectorAll('[data-showcase-dot]'));
+        const prevBtn = document.querySelector('[data-showcase-prev]');
+        const nextBtn = document.querySelector('[data-showcase-next]');
+        let activeIndex = 0;
+
+        const setActiveDot = (index) => {
+            dots.forEach((dot, i) => {
+                const isActive = i === index;
+                dot.classList.toggle('bg-bash-ink', isActive);
+                dot.classList.toggle('w-8', isActive);
+                dot.classList.toggle('bg-bash-ink/20', !isActive);
+                dot.classList.toggle('w-1.5', !isActive);
+                dot.setAttribute('aria-current', String(isActive));
+            });
+        };
+
+        const scrollToSlide = (index) => {
+            const clamped = Math.max(0, Math.min(index, slides.length - 1));
+            const slide = slides[clamped];
+            if (slide) slide.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        };
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            activeIndex = slides.indexOf(entry.target);
+                            setActiveDot(activeIndex);
+                        }
+                    });
+                },
+                { root: showcaseTrack, threshold: 0.6 }
+            );
+            slides.forEach((slide) => observer.observe(slide));
+        }
+
+        dots.forEach((dot, i) => dot.addEventListener('click', () => scrollToSlide(i)));
+        if (prevBtn) prevBtn.addEventListener('click', () => scrollToSlide(activeIndex - 1));
+        if (nextBtn) nextBtn.addEventListener('click', () => scrollToSlide(activeIndex + 1));
+    }
 });

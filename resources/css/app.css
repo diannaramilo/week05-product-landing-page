@@ -140,6 +140,40 @@ a, button, [class*="transition-"] {
 .spotlight-dark::before {
     background: radial-gradient(320px circle at var(--mx) var(--my), rgba(246,168,190,.18), transparent 70%);
 }
+.spotlight-pink::before {
+    background: radial-gradient(320px circle at var(--mx) var(--my), rgba(255,255,255,.22), transparent 70%);
+}
+
+/* Tilt: a subtle 3D lean toward the cursor, applied via inline transform
+   from app.js. Kept small (a few degrees) so it reads as depth, not a toy. */
+.tilt-card {
+    transform-style: preserve-3d;
+    transition: transform .5s var(--ease-smooth);
+    will-change: transform;
+}
+
+/* Expedition compass: the one orchestrated interactive moment in the
+   showcase section. The needle turns to track the cursor across the
+   image, in keeping with the "expedition" campaign photography. */
+.expedition-compass {
+    position: absolute;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 9999px;
+    background: rgba(25,20,16,.55);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 0 8px 24px -8px rgba(25,20,16,.5);
+}
+.compass-needle {
+    transform-origin: center;
+    transition: transform .4s var(--ease-smooth);
+}
 
 /* Magnetic clasp card: the one orchestrated interactive moment in the
    features grid. Two chrome halves slide together and pulse on click,
@@ -167,6 +201,8 @@ a, button, [class*="transition-"] {
     .parallax { transform: none !important; }
     .spotlight::before { display: none; }
     #clasp-left, #clasp-right, .clasp-snap { transition: none !important; animation: none !important; }
+    .tilt-card { transform: none !important; transition: none !important; }
+    .compass-needle { transition: none !important; }
 }
 
 /* Simple phone-frame utility used in the product showcase section */
